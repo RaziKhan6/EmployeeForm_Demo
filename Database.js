@@ -1,5 +1,5 @@
 import Realm from 'realm';
-
+import {Alert} from 'react-native';
 // Declare User Schema
 class UserSchema extends Realm.Object {}
 
@@ -48,6 +48,7 @@ let addUser = (
       empDepartment: _empDepartment,
       empSalary: _empSalary,
     });
+    Alert.alert('User added successfully.');
     console.log(
       `created tasks: ${book._id} ${book.empFirstName} ${book.empLastName}`,
     );

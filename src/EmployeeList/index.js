@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import realm, {getAllUsers} from '../../Database';
@@ -11,42 +12,37 @@ import {Searchbar} from 'react-native-paper';
 import filter from 'lodash.filter';
 
 function EmployeeList({navigation, route}) {
-  useEffect(() => {
-    setFullData(users);
-    setData(users);
-  }, []);
-  const [searchQuery, setSearchQuery] = React.useState('');
-  // const onChangeSearch = query => setSearchQuery(query);
-
-  function onChangeSearch(text) {
-    //setSearchQuery(text);
-    const formattedQuery = text.toLowerCase();
-    const data = filter(fullData, title => {
-      return contains(title, formattedQuery);
-    });
-    setSearchQuery(text);
-    setData(users);
-  }
-
-  function contains({title}, query) {
-    console.log(title)
-    const titleQuery = title.toLowerCase();
-
-    if (titleQuery.includes(query)) {
-      return true;
-    }
-    return false;
-  }
-
-  const [users, setUsers] = useState(getAllUsers());
+  const keyExtractor = item => `${item._id}`;
 
   const [query, setQuery] = useState('');
   const [data, setData] = useState([]);
   const [fullData, setFullData] = useState([]);
 
-  const keyExtractor = item => `${item._id}`;
+  function contains({empFirstName}, query1) {
+    console.log(`Print Query:- ${query1} Print Title:- ${empFirstName}`);
+    const titleQuery = empFirstName.toLowerCase();
+    if (titleQuery.includes(query1)) {
+      return true;
+    }
+    return false;
+  }
 
-  let [filteredData, setFilteredData] = useState(users);
+  function handleSearch(text) {
+    console.log(`Print Formated Query:- ${text}`);
+    const formattedQuery = text.toLowerCase();
+    console.log(`Print Formated Query1:- ${formattedQuery}`);
+    const data1 = filter(fullData, empFirstName => {
+      return contains(empFirstName, formattedQuery);
+    });
+    setQuery(text);
+    setData(data1);
+  }
+  useEffect(() => {
+    setFullData(getAllUsers());
+    setData(getAllUsers());
+  }, []);
+
+  // const onChangeSearch = query => setSearchQuery(query);
 
   const goToUserDetailPage = item =>
     navigation.navigate('Employee Details', {
@@ -108,20 +104,6 @@ function EmployeeList({navigation, route}) {
     return <View style={{height: 1, backgroundColor: 'black'}} />;
   };
 
-  function _searchFilterFunction(searchText, users) {
-    let newData = [];
-    if (searchText) {
-      newData = users.filter(function (item) {
-        const itemData = item.empFirstName.toUpperCase();
-        const textData = searchText.toUpperCase();
-        return itemData.includes(textData);
-      });
-      setFilteredData([...newData]);
-    } else {
-      setFilteredData([...users]);
-    }
-  }
-
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -135,13 +117,10 @@ function EmployeeList({navigation, route}) {
               borderColor: 'lightgrey',
               shadowOpacity: 0,
             }}
+            //theme={styles.textInputOutlineStyle}
             placeholder="Search"
-            // onChangeText={value => {
-            //   _searchFilterFunction(value, users);
-            // }}
-            onChangeText={queryText => onChangeSearch(queryText)}
-            // onChangeText={onChangeSearch}
-            value={searchQuery}
+            onChangeText={queryText => handleSearch(queryText)}
+            value={query}
           />
         </View>
         <CardListView />
@@ -149,5 +128,18 @@ function EmployeeList({navigation, route}) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  textInputOutlineStyle: {
+    colors: {
+      placeholder: 'black',
+      text: 'black',
+      primary: 'black',
+      underlineColor: 'transparent',
+      background: '#0f1a2b',
+      borderColor: 'red',
+    },
+  },
+});
 
 export default EmployeeList;

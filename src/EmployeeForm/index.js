@@ -5,24 +5,24 @@ import {
   SafeAreaView,
   Text,
   View,
-  ScrollView,
-  FlatList,
   TextInput,
   Button,
   Alert,
   Platform,
   StyleSheet,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from 'react-native';
 import realm, {getAllUsers, addUser} from '../../Database';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const EmployeeForm = ({navigation}) => {
   const [users, setUsers] = useState(getAllUsers());
   //const goToUserListPage = () => navigation.navigate('EmployeeList');
   const goToUserListPage = () =>
     navigation.navigate('Employee List', {screen: 'EmployeeList'});
+
+  const setUserDetails = text => {
+    setUser({...user, empFirstName: text});
+  };
 
   const [user, setUser] = useState({
     empFirstName: '',
@@ -58,24 +58,25 @@ const EmployeeForm = ({navigation}) => {
         }}>
         <View
           style={{
-            flex: 1 / 1,
+            width: '60%',
             height: 50,
-            backgroundColor: 'transparent',
+            backgroundColor: 'white',
             alignItems: 'center',
             flexDirection: 'row',
           }}>
-          <Text style={styles.HeaderTitle}>Employee Form</Text>
+          <Text style={styles.HeaderTitle}>Employee Detail Form</Text>
         </View>
 
         <View
           style={{
-            flex: 1 / 2,
+            width: '40%',
             height: 50,
-            backgroundColor: 'transparent',
+            backgroundColor: 'white',
             alignItems: 'center',
             flexDirection: 'row',
+            justifyContent: 'flex-end',
           }}>
-          <Button color="green" title="User Listing" onPress={goToUserList} />
+          <Button color="green" title="User Listing >" onPress={goToUserList} />
         </View>
       </View>
     );
@@ -88,8 +89,9 @@ const EmployeeForm = ({navigation}) => {
           style={{height: 50, marginLeft: 5, marginRight: 5}}
           placeholder="Employee First Name"
           value={user.empFirstName}
-          onChangeText={text => setUser({...user, empFirstName: text})}
+          onChangeText={text => setUserDetails(text)}
           autoFocus={false}
+          keyboardType="default"
           //returnKeyType= 'next'
           //defaultValue=""
         />
@@ -106,6 +108,7 @@ const EmployeeForm = ({navigation}) => {
           value={user.empLastName}
           onChangeText={text => setUser({...user, empLastName: text})}
           autoFocus={false}
+          keyboardType="default"
         />
       </View>
     );
@@ -120,6 +123,7 @@ const EmployeeForm = ({navigation}) => {
           value={user.empEmailId}
           onChangeText={text => setUser({...user, empEmailId: text})}
           autoFocus={false}
+          keyboardType="email-address"
         />
       </View>
     );
@@ -134,6 +138,7 @@ const EmployeeForm = ({navigation}) => {
           value={user.empConfirmEmailId}
           onChangeText={text => setUser({...user, empConfirmEmailId: text})}
           autoFocus={false}
+          keyboardType="email-address"
         />
       </View>
     );
@@ -148,6 +153,7 @@ const EmployeeForm = ({navigation}) => {
           value={user.empTitle}
           onChangeText={text => setUser({...user, empTitle: text})}
           autoFocus={false}
+          keyboardType="default"
         />
       </View>
     );
@@ -162,6 +168,7 @@ const EmployeeForm = ({navigation}) => {
           value={user.empDepartment}
           onChangeText={text => setUser({...user, empDepartment: text})}
           autoFocus={false}
+          keyboardType="default"
         />
       </View>
     );
@@ -176,6 +183,7 @@ const EmployeeForm = ({navigation}) => {
           value={user.empSalary}
           onChangeText={text => setUser({...user, empSalary: text})}
           autoFocus={false}
+          keyboardType="number-pad"
         />
       </View>
     );
@@ -185,26 +193,21 @@ const EmployeeForm = ({navigation}) => {
     return (
       <View
         style={{
-          height: 80,
-          backgroundColor: 'transparent',
+          height: 60,
+          backgroundColor: 'black',
+          marginTop: 20,
           marginLeft: 20,
           marginRight: 20,
+          justifyContent: 'center',
         }}>
-        <Button
-          style={{
-            height: 80,
-          }}
-          color="green"
-          title="Add User"
-          onPress={saveEmployeeData}
-        />
+        <Button color="white" title="Add User" onPress={saveEmployeeData} />
       </View>
     );
   };
 
   const goToUserList = () => {
-    if (users.length < 0) {
-      Alert.alert('No data in list.');
+    if (users.length === 0) {
+      Alert.alert('No data in list. Please add a user.');
       return;
     }
     goToUserListPage();
@@ -227,9 +230,10 @@ const EmployeeForm = ({navigation}) => {
       Alert.alert('Please enter employee confirm email id.');
       return;
     }
-    // if !(user.empEmailId === user.empConfirmEmailId) {
-    //   Alert.alert('Please enter same email id.');
-    // }
+    if (user.empEmailId !== user.empConfirmEmailId) {
+      Alert.alert('Please enter same email id.');
+      return;
+    }
     if (!user.empTitle) {
       Alert.alert('Please enter employee title.');
       return;
@@ -252,72 +256,48 @@ const EmployeeForm = ({navigation}) => {
       user.empDepartment,
       user.empSalary,
     );
-  };
 
-  const FormListView = () => {
-    return (
-      <FlatList
-        vertical
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        ListHeaderComponent={<HeaderViewForFlatList />}
-        //keyboardShouldPersistTaps="never"
-      />
-    );
-  };
-
-  const HeaderViewForFlatList = () => {
-    return (
-      <View style={{height: 570, backgroundColor: 'white'}}>
-        <TopStatusBarView />
-        <HeaderView />
-        <EmployeeFirstName />
-        <EmployeeLastName />
-        <EmployeeEmail />
-        <EmployeeConfirmEmail />
-        <EmployeeTitle />
-        <EmployeeDepartment />
-        <EmployeeSalary />
-        <SaveBtn />
-      </View>
-    );
+    //To clear form after add user.
+    setUser({
+      empFirstName: '',
+      empLastName: '',
+      empEmailId: '',
+      empConfirmEmailId: '',
+      empTitle: '',
+      empDepartment: '',
+      empSalary: '',
+    });
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? '' : ''}
-      style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={styles.container}>
-          <FormListView />
-          {/* <ScrollView keyboardShouldPersistTaps="handled">
-            <View style={styles.container}>
-              <TopStatusBarView />
-              <HeaderView />
-              <EmployeeFirstName />
-              <EmployeeLastName />
-              <EmployeeEmail />
-              <EmployeeConfirmEmail />
-              <EmployeeTitle />
-              <EmployeeDepartment />
-              <EmployeeSalary />
-              <SaveBtn />
-            </View>
-          </ScrollView> */}
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+    <KeyboardAwareScrollView style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+          <TopStatusBarView />
+          <HeaderView />
+          <EmployeeFirstName />
+          <EmployeeLastName />
+          <EmployeeEmail />
+          <EmployeeConfirmEmail />
+          <EmployeeTitle />
+          <EmployeeDepartment />
+          <EmployeeSalary />
+          <SaveBtn />
+        </View>
+      </SafeAreaView>
+    </KeyboardAwareScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   HeaderTitle: {
     fontWeight: 'bold',
     fontStyle: 'normal',
-    fontSize: 25,
+    fontSize: 20,
     textAlign: 'center',
     color: 'black',
   },
