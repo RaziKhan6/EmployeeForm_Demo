@@ -17,6 +17,7 @@ function EmployeeList({navigation, route}) {
   const [query, setQuery] = useState('');
   const [data, setData] = useState([]);
   const [fullData, setFullData] = useState([]);
+  const [isFocused, setIsFocused] = useState(false);
 
   function contains({empFirstName}, query1) {
     console.log(`Print Query:- ${query1} Print Title:- ${empFirstName}`);
@@ -114,10 +115,12 @@ function EmployeeList({navigation, route}) {
               marginRight: 10,
               marginTop: 15,
               borderWidth: 1,
-              borderColor: 'lightgrey',
+              borderColor: isFocused ? 'black' : 'lightgrey',
               shadowOpacity: 0,
             }}
             //theme={styles.textInputOutlineStyle}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             placeholder="Search"
             onChangeText={queryText => handleSearch(queryText)}
             value={query}

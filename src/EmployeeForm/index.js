@@ -1,6 +1,6 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -14,15 +14,146 @@ import {
 import realm, {getAllUsers, addUser} from '../../Database';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
+const EmployeeFirstName = props => {
+  return (
+    <View style={styles.TextInputView}>
+      <TextInput
+        style={{height: 50, marginLeft: 5, marginRight: 5}}
+        placeholder="Employee First Name"
+        value={props.value}
+        onChangeText={props.onChange}
+        autoFocus={false}
+        keyboardType="default"
+        returnKeyType="next"
+        onSubmitEditing={props.onSubmit}
+        blurOnSubmit={false}
+      />
+    </View>
+  );
+};
+
+const EmployeeLastName = props => {
+  return (
+    <View style={styles.TextInputView}>
+      <TextInput
+        style={{height: 50, marginLeft: 5, marginRight: 5}}
+        placeholder="Employee Last Name"
+        value={props.value}
+        onChangeText={props.onChange}
+        keyboardType="default"
+        returnKeyType="next"
+        onSubmitEditing={props.onSubmit}
+        blurOnSubmit={false}
+        ref={props.reff}
+      />
+    </View>
+  );
+};
+
+const EmployeeEmail = props => {
+  return (
+    <View style={styles.TextInputView}>
+      <TextInput
+        style={{height: 50, marginLeft: 5, marginRight: 5}}
+        placeholder="Employee Email Id"
+        value={props.value}
+        onChangeText={props.onChange}
+        autoFocus={false}
+        keyboardType="email-address"
+        returnKeyType="next"
+        onSubmitEditing={props.onSubmit}
+        blurOnSubmit={false}
+        ref={props.reff}
+      />
+    </View>
+  );
+};
+
+const EmployeeConfirmEmail = props => {
+  return (
+    <View style={styles.TextInputView}>
+      <TextInput
+        style={{height: 50, marginLeft: 5, marginRight: 5}}
+        placeholder="Confirm Employee Email Id"
+        value={props.value}
+        onChangeText={props.onChange}
+        autoFocus={false}
+        keyboardType="email-address"
+        returnKeyType="next"
+        onSubmitEditing={props.onSubmit}
+        blurOnSubmit={false}
+        ref={props.reff}
+      />
+    </View>
+  );
+};
+
+const EmployeeTitle = props => {
+  return (
+    <View style={styles.TextInputView}>
+      <TextInput
+        style={{height: 50, marginLeft: 5, marginRight: 5}}
+        placeholder="Employee Title"
+        value={props.value}
+        onChangeText={props.onChange}
+        autoFocus={false}
+        keyboardType="default"
+        returnKeyType="next"
+        onSubmitEditing={props.onSubmit}
+        blurOnSubmit={false}
+        ref={props.reff}
+      />
+    </View>
+  );
+};
+
+const EmployeeDepartment = props => {
+  return (
+    <View style={styles.TextInputView}>
+      <TextInput
+        style={{height: 50, marginLeft: 5, marginRight: 5}}
+        placeholder="Employee Department"
+        value={props.value}
+        onChangeText={props.onChange}
+        autoFocus={false}
+        keyboardType="default"
+        onSubmitEditing={props.onSubmit}
+        blurOnSubmit={false}
+        ref={props.reff}
+      />
+    </View>
+  );
+};
+
+const EmployeeSalary = props => {
+  return (
+    <View style={styles.TextInputView}>
+      <TextInput
+        style={{height: 50, marginLeft: 5, marginRight: 5}}
+        placeholder="Employee Salary"
+        value={props.value}
+        onChangeText={props.onChange}
+        autoFocus={false}
+        keyboardType="number-pad"
+        //returnKeyType="next"
+        ref={props.reff}
+      />
+    </View>
+  );
+};
+
 const EmployeeForm = ({navigation}) => {
   const [users, setUsers] = useState(getAllUsers());
+  const empLastNameRef = useRef();
+  const empEmailIdRef = useRef();
+  const empConfirmEmailIdRef = useRef();
+  const empTitleRef = useRef();
+  const empDepartmentRef = useRef();
+  const empSalaryRef = useRef();
+
   //const goToUserListPage = () => navigation.navigate('EmployeeList');
   const goToUserListPage = () =>
     navigation.navigate('Employee List', {screen: 'EmployeeList'});
-
-  const setUserDetails = text => {
-    setUser({...user, empFirstName: text});
-  };
 
   const [user, setUser] = useState({
     empFirstName: '',
@@ -78,113 +209,6 @@ const EmployeeForm = ({navigation}) => {
           }}>
           <Button color="green" title="User Listing >" onPress={goToUserList} />
         </View>
-      </View>
-    );
-  };
-
-  const EmployeeFirstName = () => {
-    return (
-      <View style={styles.TextInputView}>
-        <TextInput
-          style={{height: 50, marginLeft: 5, marginRight: 5}}
-          placeholder="Employee First Name"
-          value={user.empFirstName}
-          onChangeText={text => setUserDetails(text)}
-          autoFocus={false}
-          keyboardType="default"
-          //returnKeyType= 'next'
-          //defaultValue=""
-        />
-      </View>
-    );
-  };
-
-  const EmployeeLastName = () => {
-    return (
-      <View style={styles.TextInputView}>
-        <TextInput
-          style={{height: 50, marginLeft: 5, marginRight: 5}}
-          placeholder="Employee Last Name"
-          value={user.empLastName}
-          onChangeText={text => setUser({...user, empLastName: text})}
-          autoFocus={false}
-          keyboardType="default"
-        />
-      </View>
-    );
-  };
-
-  const EmployeeEmail = () => {
-    return (
-      <View style={styles.TextInputView}>
-        <TextInput
-          style={{height: 50, marginLeft: 5, marginRight: 5}}
-          placeholder="Employee Email Id"
-          value={user.empEmailId}
-          onChangeText={text => setUser({...user, empEmailId: text})}
-          autoFocus={false}
-          keyboardType="email-address"
-        />
-      </View>
-    );
-  };
-
-  const EmployeeConfirmEmail = () => {
-    return (
-      <View style={styles.TextInputView}>
-        <TextInput
-          style={{height: 50, marginLeft: 5, marginRight: 5}}
-          placeholder="Confirm Employee Email Id"
-          value={user.empConfirmEmailId}
-          onChangeText={text => setUser({...user, empConfirmEmailId: text})}
-          autoFocus={false}
-          keyboardType="email-address"
-        />
-      </View>
-    );
-  };
-
-  const EmployeeTitle = () => {
-    return (
-      <View style={styles.TextInputView}>
-        <TextInput
-          style={{height: 50, marginLeft: 5, marginRight: 5}}
-          placeholder="Employee Title"
-          value={user.empTitle}
-          onChangeText={text => setUser({...user, empTitle: text})}
-          autoFocus={false}
-          keyboardType="default"
-        />
-      </View>
-    );
-  };
-
-  const EmployeeDepartment = () => {
-    return (
-      <View style={styles.TextInputView}>
-        <TextInput
-          style={{height: 50, marginLeft: 5, marginRight: 5}}
-          placeholder="Employee Department"
-          value={user.empDepartment}
-          onChangeText={text => setUser({...user, empDepartment: text})}
-          autoFocus={false}
-          keyboardType="default"
-        />
-      </View>
-    );
-  };
-
-  const EmployeeSalary = () => {
-    return (
-      <View style={styles.TextInputView}>
-        <TextInput
-          style={{height: 50, marginLeft: 5, marginRight: 5}}
-          placeholder="Employee Salary"
-          value={user.empSalary}
-          onChangeText={text => setUser({...user, empSalary: text})}
-          autoFocus={false}
-          keyboardType="number-pad"
-        />
       </View>
     );
   };
@@ -270,18 +294,66 @@ const EmployeeForm = ({navigation}) => {
   };
 
   return (
-    <KeyboardAwareScrollView style={styles.container}>
+    <KeyboardAwareScrollView
+      style={styles.container}
+      keyboardShouldPersistTaps="always"
+      keyboardDismissMode="on-drag">
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
           <TopStatusBarView />
           <HeaderView />
-          <EmployeeFirstName />
-          <EmployeeLastName />
-          <EmployeeEmail />
-          <EmployeeConfirmEmail />
-          <EmployeeTitle />
-          <EmployeeDepartment />
-          <EmployeeSalary />
+          <EmployeeFirstName
+            value={user.empFirstName}
+            onChange={text => setUser({...user, empFirstName: text})}
+            onSubmit={() => {
+              empLastNameRef.current.focus();
+            }}
+          />
+          <EmployeeLastName
+            value={user.empLastName}
+            onChange={text => setUser({...user, empLastName: text})}
+            onSubmit={() => {
+              empEmailIdRef.current.focus();
+            }}
+            reff={empLastNameRef}
+          />
+          <EmployeeEmail
+            value={user.empEmailId}
+            onChange={text => setUser({...user, empEmailId: text})}
+            onSubmit={() => {
+              empConfirmEmailIdRef.current.focus();
+            }}
+            reff={empEmailIdRef}
+          />
+          <EmployeeConfirmEmail
+            value={user.empConfirmEmailId}
+            onChange={text => setUser({...user, empConfirmEmailId: text})}
+            onSubmit={() => {
+              empTitleRef.current.focus();
+            }}
+            reff={empConfirmEmailIdRef}
+          />
+          <EmployeeTitle
+            value={user.empTitle}
+            onChange={text => setUser({...user, empTitle: text})}
+            onSubmit={() => {
+              empDepartmentRef.current.focus();
+            }}
+            reff={empTitleRef}
+          />
+          <EmployeeDepartment
+            value={user.empDepartment}
+            onChange={text => setUser({...user, empDepartment: text})}
+            onSubmit={() => {
+              empSalaryRef.current.focus();
+            }}
+            reff={empDepartmentRef}
+          />
+          <EmployeeSalary
+            value={user.empSalary}
+            onChange={text => setUser({...user, empSalary: text})}
+            reff={empSalaryRef}
+          />
           <SaveBtn />
         </View>
       </SafeAreaView>
